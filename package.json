@@ -1,0 +1,14 @@
+{
+  "name": "oh-cosmos-redis",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/cosmos": "^3.14.1",
+    "redis": "^3.1.2"
+  },
+  "devDependencies": {}
+}
