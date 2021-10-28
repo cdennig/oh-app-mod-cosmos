@@ -1,0 +1,117 @@
+SELECT TOP 10 *
+FROM OPENROWSET(
+    'CosmosDB',
+    'Account=team2;Database=team2;Key=',
+    embOrderDetails
+    ) as Item
+
+
+-------------------------------
+
+SELECT TOP 10 
+        id
+        ,OrderDate
+        ,City
+        ,Country
+        ,[State]
+        ,OrderDetails
+FROM OPENROWSET(
+    'CosmosDB',
+    'Account=team2;Database=team2;Key=',
+    embOrderDetails
+    ) as Item
+GO
+-------------------------------
+USE master
+GO
+
+IF DB_ID (N'team2') IS NULL
+BEGIN
+    CREATE DATABASE team2;
+END
+GO
+
+USE team2
+GO
+
+DROP VIEW IF EXISTS OrderDetails;
+GO
+
+CREATE VIEW OrderDetails
+AS
+SELECT 
+         OrderId
+        ,OrderDate
+        ,City
+        ,Country
+        ,[State]
+        ,ProductId
+        ,Quantity
+FROM OPENROWSET(
+    'CosmosDB',
+    'Account=team2;Database=team2;Key=',
+    embOrderDetails
+    ) WITH (
+    OrderId bigint,
+    OrderDate varchar(50),
+    City varchar(50),
+    Country varchar(max),
+    [State] varchar(max),
+    OrderDetails varchar(max)
+) AS Orders
+CROSS APPLY OPENJSON (OrderDetails)
+WITH (
+    ProductId bigint,
+    Quantity bigint
+) AS OrderDetails
+GO
+
+CREATE VIEW SourcingEvents
+AS
+SELECT 
+         OrderDate
+        ,City
+        ,Country
+        ,[State]
+        ,ProductId
+        ,Quantity
+FROM OPENROWSET(
+    'CosmosDB',
+    'Account=team2;Database=team2;Key=',
+    eventSourcing
+    ) WITH (
+    OrderDate varchar(50),
+    City varchar(50),
+    Country varchar(max),
+    [State] varchar(max),
+    Details varchar(max)
+) AS Orders
+CROSS APPLY OPENJSON (Details)
+WITH (
+    ProductId bigint,
+    Quantity bigint
+) AS Details
+GO
+
+
+CREATE VIEW TopSales
+AS
+SELECT TOP 10
+         ProductId
+        ,Quantity
+        
+FROM OPENROWSET(
+    'CosmosDB',
+    'Account=team2;Database=team2;Key=',
+    topsales
+    ) WITH (
+    ProductId varchar(50),
+    Quantity bigint
+   
+) AS topsales
+Order by Quantity DESC
+GO
+
+
+SELECT count(1), sum(Quantity) FROM SourcingEvents
+GO
