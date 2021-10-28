@@ -16,7 +16,7 @@ namespace afn_cosmos_mat2
     public static class FuncMaterlizedview
     {
         private static readonly string _endpointUrl = "https://team2.documents.azure.com:443/";
-        private static readonly string _primaryKey = "J4iMoXnt305o17WagknO82iBBdYxiRaZ3JbY7wc6PiXTLq5XYqkmkQJPd0tQ5K4O0yeTMDtSI9hF3JBXs1FWcQ==";
+        private static readonly string _primaryKey = "";
         private static readonly string _databaseId = "team2";
         private static readonly string _containerId = "topsales";
         private static CosmosClient cosmosClient = new CosmosClient(_endpointUrl, _primaryKey);
